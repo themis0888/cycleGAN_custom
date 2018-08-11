@@ -1,5 +1,5 @@
 """
-nsml run -e nsml_run.py -d face2anime
+nsml run -e nsml_run.py -d dog2cat
 """
 
 import argparse
@@ -29,7 +29,7 @@ parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
-parser.add_argument('--save_freq', dest='save_freq', type=int, default=1000, help='save a model every save_freq iterations')
+parser.add_argument('--save_freq', dest='save_freq', type=int, default=10, help='save a model every save_freq iterations')
 parser.add_argument('--print_freq', dest='print_freq', type=int, default=100, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
@@ -44,8 +44,9 @@ args = parser.parse_args()
 
 
 def main(_):
+    print('{}{}/*.*'.format(args.data_path, args.dataset_dir + '/testA'))
     print(os.path.join(args.data_path, args.dataset_dir))
-    print(os.dirlist(os.path.join(args.data_path, args.dataset_dir)))
+    print(os.path.exists(os.path.join(args.data_path, args.dataset_dir)))
     if not os.path.exists(args.checkpoint_dir):
         os.makedirs(args.checkpoint_dir)
     if not os.path.exists(args.sample_dir):

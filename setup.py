@@ -1,4 +1,4 @@
-#nsml: tensorflow/tensorflow:latest
+#nsml: nsml/default_ml:latest
 
 from distutils.core import setup
 setup(

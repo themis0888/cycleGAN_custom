@@ -228,6 +228,7 @@ class cyclegan(object):
         """Test cyclegan"""
         init_op = tf.global_variables_initializer()
         self.sess.run(init_op)
+        print('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         if args.which_direction == 'AtoB':
             sample_files = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         elif args.which_direction == 'BtoA':
