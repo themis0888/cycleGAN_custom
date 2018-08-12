@@ -29,6 +29,7 @@ parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
+# unit of freq is step, not epoch
 parser.add_argument('--save_freq', dest='save_freq', type=int, default=10, help='save a model every save_freq iterations')
 parser.add_argument('--print_freq', dest='print_freq', type=int, default=100, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
@@ -49,6 +50,9 @@ def main(_):
     print(os.path.exists(os.path.join(args.data_path, args.dataset_dir)))
     if not os.path.exists(args.checkpoint_dir):
         os.makedirs(args.checkpoint_dir)
+    f = open('./checkpoint/hello.txt', 'w')
+    f.write('Hello world! :D')
+    f.close()
     if not os.path.exists(args.sample_dir):
         os.makedirs(args.sample_dir)
     if not os.path.exists(args.test_dir):
