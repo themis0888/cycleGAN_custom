@@ -259,7 +259,7 @@ class cyclegan(object):
                                       '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
-            save_images(sample_file, [1, 1], image_path)
+            #save_images(sample_file, [1, 1], image_path)
             imm = im.open(sample_file)
             imm.save(os.path.join(args.test_dir,'{}'.format(os.path.basename(sample_file))))
             index.write("<td>%s</td>" % os.path.basename(image_path))

@@ -7,6 +7,7 @@ import pprint
 import scipy.misc
 import numpy as np
 import copy
+import pdb
 try:
     _imread = scipy.misc.imread
 except AttributeError:
@@ -48,6 +49,7 @@ def load_test_data(image_path, fine_size=256):
     img = img/127.5 - 1
     return img
 
+# /shared/data/meta/anime/cycGAN_input/np_06047_005.npy
 def load_train_data(image_path, load_size=286, fine_size=256, is_testing=False):
     img_A = imread(image_path[0])
     img_B = imread(image_path[1])
@@ -81,7 +83,9 @@ def get_image(image_path, image_size, is_crop=True, resize_w=64, is_grayscale = 
 def save_images(images, size, image_path):
     return imsave(inverse_transform(images), size, image_path)
 
-def imread(path, is_grayscale = False):
+def imread(path, is_grayscale = False, is_np = True):
+    if is_np:
+        return np.load(path)
     if (is_grayscale):
         return _imread(path, flatten=True).astype(np.float)
     else:
@@ -101,7 +105,7 @@ def merge(images, size):
     return img
 
 def imsave(images, size, path):
-    return scipy.misc.imsave(path, merge(images, size))
+    return scipy.misc.imsave(path, merge(images[:,:,:,:3], size))
 
 def center_crop(x, crop_h, crop_w,
                 resize_h=64, resize_w=64):
