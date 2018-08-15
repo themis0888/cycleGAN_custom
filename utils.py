@@ -86,7 +86,7 @@ def save_images(images, size, image_path):
 def imread(path, is_grayscale = False):
     if '.npy' in path:
         return np.load(path)
-    if (is_grayscale):
+    elif (is_grayscale):
         return _imread(path, flatten=True).astype(np.float)
     else:
         return _imread(path, mode='RGB').astype(np.float)
