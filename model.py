@@ -65,10 +65,11 @@ class cyclegan(object):
         self.g_loss_b2a = self.criterionGAN(self.DA_fake, tf.ones_like(self.DA_fake)) \
             + self.L1_lambda * abs_criterion(self.real_A, self.fake_A_) \
             + self.L1_lambda * abs_criterion(self.real_B, self.fake_B_)
-        self.g_loss = self.criterionGAN(self.DA_fake, tf.ones_like(self.DA_fake)) \
-            + self.criterionGAN(self.DB_fake, tf.ones_like(self.DB_fake)) \
-            + self.L1_lambda * abs_criterion(self.real_A, self.fake_A_) \
+        self.gan_loss = self.criterionGAN(self.DA_fake, tf.ones_like(self.DA_fake)) \
+            + self.criterionGAN(self.DB_fake, tf.ones_like(self.DB_fake))
+        self.L1_loss = self.L1_lambda * abs_criterion(self.real_A, self.fake_A_) \
             + self.L1_lambda * abs_criterion(self.real_B, self.fake_B_)
+        self.g_loss = self.gan_loss + self.L1_loss
 
         self.fake_A_sample = tf.placeholder(tf.float32,
                                             [None, self.image_size, self.image_size,
@@ -156,8 +157,8 @@ class cyclegan(object):
                 batch_images = np.array(batch_images).astype(np.float32)
                 
                 # Update G network and record fake outputs
-                fake_A, fake_B, _, summary_str = self.sess.run(
-                    [self.fake_A, self.fake_B, self.g_optim, self.g_sum],
+                fake_A, fake_B, _, summary_str, gan_loss, L1_loss = self.sess.run(
+                    [self.fake_A, self.fake_B, self.g_optim, self.g_sum, self.gan_loss, self.L1_loss],
                     feed_dict={self.real_data: batch_images, self.lr: lr})
                 self.writer.add_summary(summary_str, counter)
                 [fake_A, fake_B] = self.pool([fake_A, fake_B])
@@ -172,9 +173,10 @@ class cyclegan(object):
                 self.writer.add_summary(summary_str, counter)
 
                 counter += 1
-                if np.mod(counter, 10) == 0:
+                if np.mod(idx, 10) == 0:
                     print(("Epoch: [%2d] [%4d/%4d] time: %4.4f" % (
                         epoch, idx, batch_idxs, time.time() - start_time)))
+                    print("GAN_loss: {0:.6f} \tL1_loss: {1:.6f}".format(gan_loss, L1_loss))
 
                 if np.mod(counter, args.print_freq) == 1:
                     self.sample_model(args.sample_dir, epoch, idx)
@@ -230,7 +232,6 @@ class cyclegan(object):
         """Test cyclegan"""
         init_op = tf.global_variables_initializer()
         self.sess.run(init_op)
-        print('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         if args.which_direction == 'AtoB':
             sample_files = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         elif args.which_direction == 'BtoA':
@@ -260,6 +261,60 @@ class cyclegan(object):
                                       '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
+
+            if '.npy' in sample_file:
+                npy_img = np.load(sample_file)
+                disc_img = np.uint8(npy_img[:,:,:3])
+                org_im = im.fromarray(disc_img)
+                file_name = sample_file[:-4]+'.jpg'
+            else:
+                org_im = im.open(sample_file)
+                file_name = sample_file
+            org_im.save(os.path.join(args.test_dir,'{}'.format(os.path.basename(file_name))))
+            index.write("<td>%s</td>" % os.path.basename(image_path))
+            index.write("<td><img src='%s'></td>" % (sample_file if os.path.isabs(sample_file) else (
+                '..' + os.path.sep + sample_file)))
+            index.write("<td><img src='%s'></td>" % (image_path if os.path.isabs(image_path) else (
+                '..' + os.path.sep + image_path)))
+            index.write("</tr>")
+        index.close()
+
+    def reconstruct(self, args):
+        """Test cyclegan"""
+        init_op = tf.global_variables_initializer()
+        self.sess.run(init_op)
+        if args.which_direction == 'AtoBtoA':
+            sample_files = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
+        elif args.which_direction == 'BtoAtoB':
+            sample_files = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
+        else:
+            raise Exception('--which_direction must be AtoB or BtoA')
+
+        if self.load(args.checkpoint_dir):
+            print(" [*] Load SUCCESS")
+        else:
+            print(" [!] Load failed...")
+
+        # write html for visual comparison
+        index_path = os.path.join(args.test_dir, '{0}_index.html'.format(args.which_direction))
+        index = open(index_path, "w")
+        index.write("<html><body><table><tr>")
+        index.write("<th>name</th><th>input</th><th>output</th></tr>")
+
+        out_var, in_var = (self.testB, self.test_A) if args.which_direction == 'AtoB' else (
+            self.testA, self.test_B)
+        BtoB, AtoA = (self.testB, self.test_A) if args.which_direction == 'BtoAtoB' else (
+            self.testA, self.test_B)
+
+        for sample_file in sample_files[:100]:
+            print('Processing image: ' + sample_file)
+            sample_image = [load_test_data(sample_file, args.fine_size)]
+            sample_image = np.array(sample_image).astype(np.float32)
+            image_path = os.path.join(args.test_dir,
+                                      '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
+            OtoT = self.sess.run(out_var, feed_dict={in_var: sample_image})
+            OtoTtoO = self.sess.run(out_var, feed_dict={in_var: OtoT})
+            save_images(OtoTtoO, [1, 1], image_path)
 
             if '.npy' in sample_file:
                 npy_img = np.load(sample_file)

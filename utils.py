@@ -83,8 +83,8 @@ def get_image(image_path, image_size, is_crop=True, resize_w=64, is_grayscale = 
 def save_images(images, size, image_path):
     return imsave(inverse_transform(images), size, image_path)
 
-def imread(path, is_grayscale = False, is_np = True):
-    if is_np:
+def imread(path, is_grayscale = False):
+    if '.npy' in path:
         return np.load(path)
     if (is_grayscale):
         return _imread(path, flatten=True).astype(np.float)
