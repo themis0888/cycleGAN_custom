@@ -1,13 +1,13 @@
 """
-CUDA_VISIBLE_DEVICES=4 python main.py \
+CUDA_VISIBLE_DEVICES=5 python main.py \
 --dataset_dir=f2c_4dcyc --data_path=/shared/data/ \
 --continue_train=True \
-#--checkpoint_dir=../result/cycleGAN/checkpoint \
+--checkpoint_dir=checkpoint \
 
 
-CUDA_VISIBLE_DEVICES=1 python main.py --dataset_dir=cat2dog_face \
+CUDA_VISIBLE_DEVICES=1 python main.py --dataset_dir=f2c_4dcyc \
 --which_direction=AtoB --phase test --data_path=/shared/data/ \
---checkpoint_dir=./checkpoint
+--checkpoint_dir=checkpoint
 """
 
 import argparse

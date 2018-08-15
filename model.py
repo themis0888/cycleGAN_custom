@@ -6,6 +6,7 @@ import tensorflow as tf
 import numpy as np
 from collections import namedtuple
 from PIL import Image as im
+import numpy as np
 
 from module import *
 from utils import *
@@ -259,9 +260,16 @@ class cyclegan(object):
                                       '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
-            #save_images(sample_file, [1, 1], image_path)
-            imm = im.open(sample_file)
-            imm.save(os.path.join(args.test_dir,'{}'.format(os.path.basename(sample_file))))
+
+            if '.npy' in sample_file:
+                npy_img = np.load(sample_file)
+                disc_img = np.uint8(npy_img[:,:,:3])
+                org_im = im.fromarray(disc_img)
+                file_name = sample_file[:-4]+'.jpg'
+            else:
+                org_im = im.open(sample_file)
+                file_name = sample_file
+            org_im.save(os.path.join(args.test_dir,'{}'.format(os.path.basename(file_name))))
             index.write("<td>%s</td>" % os.path.basename(image_path))
             index.write("<td><img src='%s'></td>" % (sample_file if os.path.isabs(sample_file) else (
                 '..' + os.path.sep + sample_file)))

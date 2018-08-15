@@ -105,7 +105,10 @@ def merge(images, size):
     return img
 
 def imsave(images, size, path):
-    return scipy.misc.imsave(path, merge(images[:,:,:,:3], size))
+    if '.npy' in path:
+        return scipy.misc.imsave(path[:-4]+'.jpg', merge(images[:,:,:,:3], size))    
+    else:
+        return scipy.misc.imsave(path, merge(images[:,:,:,:3], size))
 
 def center_crop(x, crop_h, crop_w,
                 resize_h=64, resize_w=64):
