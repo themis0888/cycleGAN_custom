@@ -255,7 +255,7 @@ class cyclegan(object):
             self.testA, self.test_B)
 
 
-        for sample_file in sample_files[:100]:
+        for sample_file in sample_files[:30]:
             print('Processing image: ' + sample_file)
             sample_image = [load_test_data(sample_file, args.fine_size)]
             sample_image = np.array(sample_image).astype(np.float32)
@@ -264,7 +264,7 @@ class cyclegan(object):
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
             pdb.set_trace()
-
+            
             if '.npy' in sample_file:
                 npy_img = np.load(sample_file)
                 disc_img = np.uint8(npy_img[:,:,:3])
@@ -309,7 +309,7 @@ class cyclegan(object):
         BtoB, AtoA = (self.testB, self.test_A) if args.which_direction == 'BtoAtoB' else (
             self.testA, self.test_B)
 
-        for sample_file in sample_files[:100]:
+        for sample_file in sample_files[:30]:
             print('Processing image: ' + sample_file)
             sample_image = [load_test_data(sample_file, args.fine_size)]
             sample_image = np.array(sample_image).astype(np.float32)

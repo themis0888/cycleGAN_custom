@@ -8,7 +8,9 @@ CUDA_VISIBLE_DEVICES=4 python main.py \
 
 CUDA_VISIBLE_DEVICES=7 python main.py --dataset_dir=f2c_4dcyc \
 --which_direction=AtoB --phase test --data_path=/shared/data/ \
---checkpoint_dir=checkpoint
+--checkpoint_dir=checkpoint \
+--input_nc=4 --output_nc=4 \
+--use_resnet False
 """
 
 import argparse

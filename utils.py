@@ -45,7 +45,14 @@ class ImagePool(object):
 
 def load_test_data(image_path, fine_size=256):
     img = imread(image_path)
-    img = scipy.misc.imresize(img, [fine_size, fine_size])
+    
+    if img.shape[-1] > 3:
+        img1 = scipy.misc.imresize(img[:,:,:3], [fine_size, fine_size])
+        img2 = scipy.misc.imresize(img[:,:,3], [fine_size, fine_size])
+        img2 = np.expand_dims(img2, axis = -1)
+        img = np.concatenate((img1, img2), axis = -1)
+    else:
+        img = scipy.misc.imresize(img, [fine_size, fine_size])
     img = img/127.5 - 1
     return img
 
