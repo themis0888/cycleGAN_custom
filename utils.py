@@ -45,14 +45,7 @@ class ImagePool(object):
 
 def load_test_data(image_path, fine_size=256):
     img = imread(image_path)
-    
-    if img.shape[-1] > 3:
-        img1 = scipy.misc.imresize(img[:,:,:3], [fine_size, fine_size])
-        img2 = scipy.misc.imresize(img[:,:,3], [fine_size, fine_size])
-        img2 = np.expand_dims(img2, axis = -1)
-        img = np.concatenate((img1, img2), axis = -1)
-    else:
-        img = scipy.misc.imresize(img, [fine_size, fine_size])
+    img = mat_resize(img, fine_size)
     img = img/127.5 - 1
     return img
 
@@ -61,8 +54,11 @@ def load_train_data(image_path, load_size=286, fine_size=256, is_testing=False):
     img_A = imread(image_path[0])
     img_B = imread(image_path[1])
     if not is_testing:
-        img_A = scipy.misc.imresize(img_A, [load_size, load_size])
-        img_B = scipy.misc.imresize(img_B, [load_size, load_size])
+        #img_A = scipy.misc.imresize(img_A, [load_size, load_size])
+        #img_B = scipy.misc.imresize(img_B, [load_size, load_size])
+        img_A = mat_resize(img_A, load_size)
+        img_B = mat_resize(img_B, load_size)
+
         h1 = int(np.ceil(np.random.uniform(1e-2, load_size-fine_size)))
         w1 = int(np.ceil(np.random.uniform(1e-2, load_size-fine_size)))
         img_A = img_A[h1:h1+fine_size, w1:w1+fine_size]
@@ -72,8 +68,10 @@ def load_train_data(image_path, load_size=286, fine_size=256, is_testing=False):
             img_A = np.fliplr(img_A)
             img_B = np.fliplr(img_B)
     else:
-        img_A = scipy.misc.imresize(img_A, [fine_size, fine_size])
-        img_B = scipy.misc.imresize(img_B, [fine_size, fine_size])
+        # img_A = scipy.misc.imresize(img_A, [fine_size, fine_size])
+        # img_B = scipy.misc.imresize(img_B, [fine_size, fine_size])
+        img_A = mat_resize(img_A, fine_size)
+        img_B = mat_resize(img_B, fine_size)
 
     img_A = img_A/127.5 - 1.
     img_B = img_B/127.5 - 1.
@@ -97,6 +95,20 @@ def imread(path, is_grayscale = False):
         return _imread(path, flatten=True).astype(np.float)
     else:
         return _imread(path, mode='RGB').astype(np.float)
+
+def mat_resize(npy_file, fine_size):
+    img = npy_file
+    img_layer = []
+    for i in range(img.shape[-1]):
+        img_layer.append(np.zeros([fine_size, fine_size]))
+        img_layer[i] = scipy.misc.imresize(img[:,:,i], [fine_size, fine_size])
+        img_layer[i] = np.expand_dims(img_layer[i], axis = -1)
+        if i == 0:
+            img_concat = img_layer[i]
+        else:
+            img_concat = np.concatenate((img_concat, img_layer[i]), axis = -1)
+    return img_concat
+
 
 def merge_images(images, size):
     return inverse_transform(images)
