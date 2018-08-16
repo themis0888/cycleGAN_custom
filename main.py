@@ -6,8 +6,8 @@ CUDA_VISIBLE_DEVICES=4 python main.py \
 --checkpoint_dir=../result/cycleGAN/checkpoint/
 
 
-CUDA_VISIBLE_DEVICES=4 python main.py --dataset_dir=f2c_4dcyc \
---which_direction=AtoBtoA --phase reconstruct --data_path=/shared/data/ \
+CUDA_VISIBLE_DEVICES=7 python main.py --dataset_dir=f2c_4dcyc \
+--which_direction=AtoB --phase test --data_path=/shared/data/ \
 --checkpoint_dir=checkpoint
 """
 
@@ -41,8 +41,8 @@ parser.add_argument('--continue_train', dest='continue_train', type=bool, defaul
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')
 parser.add_argument('--test_dir', dest='test_dir', default='./test', help='test sample are saved here')
-parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=100.0, help='weight on L1 term in objective')
-parser.add_argument('--use_resnet', dest='use_resnet', type=bool, default=True, help='generation network using reidule block')
+parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=1000.0, help='weight on L1 term in objective')
+parser.add_argument('--use_resnet', dest='use_resnet', type=bool, default=False, help='generation network using reidule block')
 parser.add_argument('--use_lsgan', dest='use_lsgan', type=bool, default=False, help='gan loss defined in lsgan')
 parser.add_argument('--max_size', dest='max_size', type=int, default=50, help='max size of image pool, 0 means do not use image pool')
 

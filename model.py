@@ -7,6 +7,7 @@ import numpy as np
 from collections import namedtuple
 from PIL import Image as im
 import numpy as np
+import pdb
 
 from module import *
 from utils import *
@@ -253,6 +254,7 @@ class cyclegan(object):
         out_var, in_var = (self.testB, self.test_A) if args.which_direction == 'AtoB' else (
             self.testA, self.test_B)
 
+
         for sample_file in sample_files[:100]:
             print('Processing image: ' + sample_file)
             sample_image = [load_test_data(sample_file, args.fine_size)]
@@ -261,6 +263,7 @@ class cyclegan(object):
                                       '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
+            pdb.set_trace()
 
             if '.npy' in sample_file:
                 npy_img = np.load(sample_file)
