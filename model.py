@@ -10,7 +10,8 @@ import numpy as np
 import pdb
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt
+import pdb
 
 from module import *
 from utils import *
@@ -184,9 +185,9 @@ class cyclegan(object):
                         epoch, idx, batch_idxs, time.time() - start_time)))
                     print("GAN_loss: {0:.6f} \tL1_loss: {1:.6f}".format(gan_loss, L1_loss))
 
-                if np.mod(counter, args.print_freq) == 1:
+                if np.mod(idx, args.print_freq) == 1:
                     self.sample_model(args.sample_dir, epoch, idx)
-
+                    self.visualize(args.sample_dir, epoch, idx)
 
                 if np.mod(counter, 50) == 0:
                     self.save(args.checkpoint_dir, counter)
@@ -240,6 +241,38 @@ class cyclegan(object):
         save_images(fake_B, [self.batch_size, 1],
                     './{}/B_{:02d}_{:04d}.jpg'.format(sample_dir, epoch, idx))
 
+
+    def visualize(self, sample_dir, epoch, idx):
+        
+        num_input = 4
+        num_col = 5
+        dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
+        dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
+        np.random.shuffle(dataA)
+        np.random.shuffle(dataB)
+        fig=plt.figure(figsize=(8, 8))
+        # pdb.set_trace()
+
+        for i in range(num_input):
+
+            input_files = list(zip(dataA[(self.batch_size)*i:(self.batch_size)*(i+1)], dataB[(self.batch_size)*i:(self.batch_size)*(i+1)]))
+            sample_images = [load_train_data(input_file, is_testing=True) for input_file in input_files]
+            sample_images = np.array(sample_images).astype(np.float32)
+            print(sample_images.shape)
+            output = []
+            fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
+            fig.add_subplot(num_input, num_col, num_col*i+1)
+            plt.imshow(sample_images[0,:,:,:3])
+            fig.add_subplot(num_input, num_col, num_col*i+2)
+            plt.imshow(fake_A[0,:,:,:3])
+            fig.add_subplot(num_input, num_col, num_col*i+3)
+            plt.imshow(fake_B[0,:,:,:3])
+            fig.add_subplot(num_input, num_col, num_col*i+4)
+            plt.imshow(rec_A[0,:,:,:3])
+            fig.add_subplot(num_input, num_col, num_col*i+5)
+            plt.imshow(rec_B[0,:,:,:3])
+
+        plt.savefig(os.path.join(sample_dir, 'sample_{}.jpg'.format(idx)))
 
 
 

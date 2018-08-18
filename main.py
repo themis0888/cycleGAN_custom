@@ -1,5 +1,5 @@
 """
-CUDA_VISIBLE_DEVICES=4 python main.py \
+CUDA_VISIBLE_DEVICES=1 python main.py \
 --dataset_dir=f2c_4dcyc --data_path=/shared/data/ \
 --input_nc=4 --output_nc=4 --continue_train=True \
 --checkpoint_dir=checkpoint \
@@ -38,7 +38,7 @@ parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='mome
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
 parser.add_argument('--save_freq', dest='save_freq', type=int, default=1000, help='save a model every save_freq iterations')
-parser.add_argument('--print_freq', dest='print_freq', type=int, default=100, help='print the debug information every print_freq iterations')
+parser.add_argument('--print_freq', dest='print_freq', type=int, default=10, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')
@@ -48,6 +48,7 @@ parser.add_argument('--use_resnet', dest='use_resnet', type=bool, default=True, 
 parser.add_argument('--use_lsgan', dest='use_lsgan', type=bool, default=False, help='gan loss defined in lsgan')
 parser.add_argument('--max_size', dest='max_size', type=int, default=50, help='max size of image pool, 0 means do not use image pool')
 parser.add_argument('--nsml', dest='nsml', type=bool, default=False, help='use nsml')
+
 args = parser.parse_args()
 
 
