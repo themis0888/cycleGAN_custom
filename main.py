@@ -6,7 +6,7 @@ CUDA_VISIBLE_DEVICES=1 python main.py \
 --checkpoint_dir=../result/cycleGAN/checkpoint/
 
 
-CUDA_VISIBLE_DEVICES=3 python main.py --dataset_dir=f2c_4dcyc \
+CUDA_VISIBLE_DEVICES=0 python main.py --dataset_dir=f2c_4dcyc \
 --which_direction=AtoB --phase test --data_path=/shared/data/ \
 --checkpoint_dir=checkpoint \
 --input_nc=4 --output_nc=4 \
@@ -37,8 +37,8 @@ parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
-parser.add_argument('--save_freq', dest='save_freq', type=int, default=1000, help='save a model every save_freq iterations')
-parser.add_argument('--print_freq', dest='print_freq', type=int, default=10, help='print the debug information every print_freq iterations')
+parser.add_argument('--save_freq', dest='save_freq', type=int, default=10000, help='save a model every save_freq iterations')
+parser.add_argument('--print_freq', dest='print_freq', type=int, default=1000, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')
@@ -69,8 +69,8 @@ def main(_):
             model.train(args)
         elif args.phase == 'test':
             model.test(args)
-        elif args.phase == 'reconstruct':
-            model.reconstruct(args)
+        elif args.phase == 'visualize':
+            model.visualize(args.sample_dir, 0, True, args)
 
 if __name__ == '__main__':
     tf.app.run()

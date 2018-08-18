@@ -187,9 +187,9 @@ class cyclegan(object):
 
                 if np.mod(counter, args.print_freq) == 0:
                     # self.sample_model(args.sample_dir, epoch, idx)
-                    self.visualize(args.sample_dir, epoch, counter)
+                    self.visualize(args.sample_dir, counter)
 
-                if np.mod(epoch, args.save_freq) == 0:
+                if np.mod(counter, args.save_freq) == 0:
                     self.save(args.checkpoint_dir, counter)
                     if args.nsml == True:
                         nsml.save(epoch)
@@ -220,30 +220,16 @@ class cyclegan(object):
         else:
             return False
 
-    def sample_model(self, sample_dir, epoch, idx):
+    def visualize(self, sample_dir, counter, is_testing = False, args = None):
         
-        num_input = 4
-        dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
-        dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
-        np.random.shuffle(dataA)
-        np.random.shuffle(dataB)
+        if is_testing:
+            init_op = tf.global_variables_initializer()
+            self.sess.run(init_op)
+            if self.load(args.checkpoint_dir):
+                print(" [*] Load SUCCESS")
+            else:
+                print(" [!] Load failed...")
 
-        batch_files = list(zip(dataA[:self.batch_size], dataB[:self.batch_size]))
-        sample_images = [load_train_data(batch_file, is_testing=True) for batch_file in batch_files]
-        sample_images = np.array(sample_images).astype(np.float32)
-
-        fake_A, fake_B = self.sess.run(
-            [self.fake_A, self.fake_B],
-            feed_dict={self.real_data: sample_images}
-        )
-        save_images(fake_A, [self.batch_size, 1],
-                    './{}/A_{:02d}epoch_{:04d}.jpg'.format(sample_dir, epoch, idx))
-        save_images(fake_B, [self.batch_size, 1],
-                    './{}/B_{:02d}_{:04d}.jpg'.format(sample_dir, epoch, idx))
-
-
-    def visualize(self, sample_dir, epoch, idx):
-        
         num_input = 4
         num_col = 5
         dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
@@ -271,8 +257,7 @@ class cyclegan(object):
             fig.add_subplot(num_input, num_col, num_col*i+5)
             plt.imshow(rec_B[0,:,:,:3])
 
-        plt.savefig(os.path.join(sample_dir, 'sample_{}.jpg'.format(idx)))
-
+        plt.savefig(os.path.join(sample_dir, 'sample_{0:03d}k.jpg'.format(int(counter/1000))))
 
 
     def test(self, args):
