@@ -185,11 +185,11 @@ class cyclegan(object):
                         epoch, idx, batch_idxs, time.time() - start_time)))
                     print("GAN_loss: {0:.6f} \tL1_loss: {1:.6f}".format(gan_loss, L1_loss))
 
-                if np.mod(idx, args.print_freq) == 1:
-                    self.sample_model(args.sample_dir, epoch, idx)
-                    self.visualize(args.sample_dir, epoch, idx)
+                if np.mod(counter, args.print_freq) == 0:
+                    # self.sample_model(args.sample_dir, epoch, idx)
+                    self.visualize(args.sample_dir, epoch, counter)
 
-                if np.mod(counter, 50) == 0:
+                if np.mod(epoch, args.save_freq) == 0:
                     self.save(args.checkpoint_dir, counter)
                     if args.nsml == True:
                         nsml.save(epoch)
@@ -258,8 +258,7 @@ class cyclegan(object):
             input_files = list(zip(dataA[(self.batch_size)*i:(self.batch_size)*(i+1)], dataB[(self.batch_size)*i:(self.batch_size)*(i+1)]))
             sample_images = [load_train_data(input_file, is_testing=True) for input_file in input_files]
             sample_images = np.array(sample_images).astype(np.float32)
-            print(sample_images.shape)
-            output = []
+
             fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
             fig.add_subplot(num_input, num_col, num_col*i+1)
             plt.imshow(sample_images[0,:,:,:3])
