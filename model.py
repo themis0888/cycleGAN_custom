@@ -43,6 +43,8 @@ class cyclegan(object):
         self._build_model()
         self.saver = tf.train.Saver()
         self.pool = ImagePool(args.max_size)
+        if args.nsml == True:
+            import nsml
 
     def _build_model(self):
         self.real_data = tf.placeholder(tf.float32,
@@ -182,8 +184,11 @@ class cyclegan(object):
                 if np.mod(counter, args.print_freq) == 1:
                     self.sample_model(args.sample_dir, epoch, idx)
 
-                if np.mod(counter, args.save_freq) == 1:
+
+                if np.mod(counter, 50) == 0:
                     self.save(args.checkpoint_dir, counter)
+                    if args.nsml == True:
+                        nsml.save(epoch)
 
     def save(self, checkpoint_dir, step):
         model_name = "cyclegan.model"
@@ -263,7 +268,6 @@ class cyclegan(object):
                                       '{0}_{1}'.format(args.which_direction, os.path.basename(sample_file)))
             fake_img = self.sess.run(out_var, feed_dict={in_var: sample_image})
             save_images(fake_img, [1, 1], image_path)
-            pdb.set_trace()
             
             if '.npy' in sample_file:
                 npy_img = np.load(sample_file)
