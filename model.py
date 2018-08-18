@@ -8,6 +8,9 @@ from collections import namedtuple
 from PIL import Image as im
 import numpy as np
 import pdb
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as pyplot
 
 from module import *
 from utils import *
@@ -217,10 +220,13 @@ class cyclegan(object):
             return False
 
     def sample_model(self, sample_dir, epoch, idx):
+        
+        num_input = 4
         dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
         np.random.shuffle(dataA)
         np.random.shuffle(dataB)
+
         batch_files = list(zip(dataA[:self.batch_size], dataB[:self.batch_size]))
         sample_images = [load_train_data(batch_file, is_testing=True) for batch_file in batch_files]
         sample_images = np.array(sample_images).astype(np.float32)
@@ -230,9 +236,12 @@ class cyclegan(object):
             feed_dict={self.real_data: sample_images}
         )
         save_images(fake_A, [self.batch_size, 1],
-                    './{}/A_{:02d}_{:04d}.jpg'.format(sample_dir, epoch, idx))
+                    './{}/A_{:02d}epoch_{:04d}.jpg'.format(sample_dir, epoch, idx))
         save_images(fake_B, [self.batch_size, 1],
                     './{}/B_{:02d}_{:04d}.jpg'.format(sample_dir, epoch, idx))
+
+
+
 
     def test(self, args):
         """Test cyclegan"""
@@ -285,6 +294,7 @@ class cyclegan(object):
                 '..' + os.path.sep + image_path)))
             index.write("</tr>")
         index.close()
+
 
     def reconstruct(self, args):
         """Test cyclegan"""
