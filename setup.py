@@ -10,6 +10,7 @@ setup(
             'tqdm',
             'pillow',
             'scipy',
-            'numpy'
+            'numpy',
+            'imageio'
         ]
 )

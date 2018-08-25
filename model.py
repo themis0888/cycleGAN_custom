@@ -11,7 +11,6 @@ import pdb
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import pdb
 
 from module import *
 from utils import *
@@ -47,8 +46,7 @@ class cyclegan(object):
         self._build_model()
         self.saver = tf.train.Saver()
         self.pool = ImagePool(args.max_size)
-        if args.nsml == True:
-            import nsml
+
 
     def _build_model(self):
         self.real_data = tf.placeholder(tf.float32,
@@ -244,20 +242,22 @@ class cyclegan(object):
             input_files = list(zip(dataA[(self.batch_size)*i:(self.batch_size)*(i+1)], dataB[(self.batch_size)*i:(self.batch_size)*(i+1)]))
             sample_images = [load_train_data(input_file, is_testing=True) for input_file in input_files]
             sample_images = np.array(sample_images).astype(np.float32)
+            pdb.set_trace()
 
             fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
+            
             fig.add_subplot(num_input, num_col, num_col*i+1)
-            plt.imshow(sample_images[0,:,:,:3])
+            plt.imshow((sample_images[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+2)
-            plt.imshow(fake_A[0,:,:,:3])
+            plt.imshow((fake_A[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+3)
-            plt.imshow(fake_B[0,:,:,:3])
+            plt.imshow((fake_B[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+4)
-            plt.imshow(rec_A[0,:,:,:3])
+            plt.imshow((rec_A[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+5)
-            plt.imshow(rec_B[0,:,:,:3])
+            plt.imshow((rec_B[0,:,:,:3]+1)/2)
 
-        plt.savefig(os.path.join(sample_dir, 'sample_{0:03d}k.jpg'.format(int(counter/1000))))
+        plt.savefig(os.path.join(sample_dir, 'A_{0:03d}k.jpg'.format(int(counter/1000))))
 
 
     def test(self, args):

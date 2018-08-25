@@ -1,16 +1,15 @@
 """
-CUDA_VISIBLE_DEVICES=1 python main.py \
---dataset_dir=f2c_4dcyc --data_path=/shared/data/ \
---input_nc=4 --output_nc=4 --continue_train=True \
+CUDA_VISIBLE_DEVICES=7 python main.py \
+--dataset_dir=f2c_mid_4dcyc --data_path=/shared/data/ \
+--input_nc=4 --output_nc=4 --continue_train=False \
 --checkpoint_dir=checkpoint \
 --checkpoint_dir=../result/cycleGAN/checkpoint/
 
 
-CUDA_VISIBLE_DEVICES=0 python main.py --dataset_dir=f2c_4dcyc \
+CUDA_VISIBLE_DEVICES=4 python main.py --dataset_dir=f2c_4dcyc \
 --which_direction=AtoB --phase test --data_path=/shared/data/ \
 --checkpoint_dir=checkpoint \
 --input_nc=4 --output_nc=4 \
---use_resnet False
 """
 
 import argparse
@@ -37,13 +36,13 @@ parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
-parser.add_argument('--save_freq', dest='save_freq', type=int, default=10000, help='save a model every save_freq iterations')
-parser.add_argument('--print_freq', dest='print_freq', type=int, default=1000, help='print the debug information every print_freq iterations')
+parser.add_argument('--save_freq', dest='save_freq', type=int, default=2000, help='save a model every save_freq iterations')
+parser.add_argument('--print_freq', dest='print_freq', type=int, default=10, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
-parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')
+parser.add_argument('--sample_dir', dest='sample_dir', default='./sample2', help='sample are saved here')
 parser.add_argument('--test_dir', dest='test_dir', default='./test', help='test sample are saved here')
-parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=1000.0, help='weight on L1 term in objective')
+parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=10.0, help='weight on L1 term in objective')
 parser.add_argument('--use_resnet', dest='use_resnet', type=bool, default=True, help='generation network using reidule block')
 parser.add_argument('--use_lsgan', dest='use_lsgan', type=bool, default=False, help='gan loss defined in lsgan')
 parser.add_argument('--max_size', dest='max_size', type=int, default=50, help='max size of image pool, 0 means do not use image pool')

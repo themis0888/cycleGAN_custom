@@ -1,5 +1,7 @@
 """
-nsml run -e nsml_run.py -d face2cartoon
+nsml run -e nsml_run.py -d face2anime
+nsml run -e nsml_run.py -d f2c_4d
+nsml run -e nsml_run.py -d f2c_mid_4dcyc
 """
 
 import argparse
@@ -23,13 +25,13 @@ parser.add_argument('--load_size', dest='load_size', type=int, default=286, help
 parser.add_argument('--fine_size', dest='fine_size', type=int, default=256, help='then crop to this size')
 parser.add_argument('--ngf', dest='ngf', type=int, default=64, help='# of gen filters in first conv layer')
 parser.add_argument('--ndf', dest='ndf', type=int, default=64, help='# of discri filters in first conv layer')
-parser.add_argument('--input_nc', dest='input_nc', type=int, default=3, help='# of input image channels')
-parser.add_argument('--output_nc', dest='output_nc', type=int, default=3, help='# of output image channels')
+parser.add_argument('--input_nc', dest='input_nc', type=int, default=4, help='# of input image channels')
+parser.add_argument('--output_nc', dest='output_nc', type=int, default=4, help='# of output image channels')
 parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial learning rate for adam')
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
-parser.add_argument('--save_freq', dest='save_freq', type=int, default=10000, help='save a model every save_freq iterations')
+parser.add_argument('--save_freq', dest='save_freq', type=int, default=5000, help='save a model every save_freq iterations')
 parser.add_argument('--print_freq', dest='print_freq', type=int, default=1000, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
@@ -39,7 +41,7 @@ parser.add_argument('--L1_lambda', dest='L1_lambda', type=float, default=1000.0,
 parser.add_argument('--use_resnet', dest='use_resnet', type=bool, default=True, help='generation network using reidule block')
 parser.add_argument('--use_lsgan', dest='use_lsgan', type=bool, default=False, help='gan loss defined in lsgan')
 parser.add_argument('--max_size', dest='max_size', type=int, default=50, help='max size of image pool, 0 means do not use image pool')
-parser.add_argument('--nsml', dest='nsml', type=bool, default=False, help='use nsml')
+parser.add_argument('--nsml', dest='nsml', type=bool, default=True, help='use nsml')
 
 args = parser.parse_args()
 
@@ -66,3 +68,5 @@ def main(_):
 
 if __name__ == '__main__':
     tf.app.run()
+
+    
