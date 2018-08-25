@@ -2,6 +2,7 @@
 nsml run -e nsml_run.py -d face2anime
 nsml run -e nsml_run.py -d f2c_4d
 nsml run -e nsml_run.py -d f2c_4dcyc
+nsml run -e nsml_run.py -d face2anime -a '--input_nc=3 --output_nc=3'
 """
 
 import argparse
@@ -32,7 +33,7 @@ parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='mome
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
 parser.add_argument('--save_freq', dest='save_freq', type=int, default=5000, help='save a model every save_freq iterations')
-parser.add_argument('--print_freq', dest='print_freq', type=int, default=1000, help='print the debug information every print_freq iterations')
+parser.add_argument('--print_freq', dest='print_freq', type=int, default=200, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample', help='sample are saved here')

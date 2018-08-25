@@ -26,6 +26,7 @@ class cyclegan(object):
         self.L1_lambda = args.L1_lambda
         self.dataset_dir = args.dataset_dir
         self.data_path = args.data_path
+        self.print_freq = args.print_freq
 
         self.discriminator = discriminator
         if args.use_resnet:
@@ -36,6 +37,8 @@ class cyclegan(object):
             self.criterionGAN = mae_criterion
         else:
             self.criterionGAN = sce_criterion
+        if args.nsml:
+            import nsml
 
         OPTIONS = namedtuple('OPTIONS', 'batch_size image_size \
                               gf_dim df_dim output_c_dim is_training')
@@ -190,6 +193,7 @@ class cyclegan(object):
                 if np.mod(counter, args.save_freq) == 0:
                     self.save(args.checkpoint_dir, counter)
                     if args.nsml == True:
+
                         nsml.save(epoch)
 
     def save(self, checkpoint_dir, step):
@@ -229,7 +233,7 @@ class cyclegan(object):
                 print(" [!] Load failed...")
 
         num_input = 4
-        num_col = 3
+        num_col = 4
         dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
         dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
         np.random.shuffle(dataA)
@@ -244,7 +248,7 @@ class cyclegan(object):
             input_files = list(dataA[(self.batch_size)*i:(self.batch_size)*(i+1)])
             sample_images = [load_test_data(input_file, self.image_size) for input_file in input_files]
             sample_images = np.array(sample_images).astype(np.float32)
-
+            pdb.set_trace()
             # fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
             OtoT = self.sess.run(A2B, feed_dict={input_A: sample_images})
             OtoTtoO = self.sess.run(B2A, feed_dict={input_B: OtoT})
@@ -252,11 +256,15 @@ class cyclegan(object):
             plt.imshow((sample_images[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+2)
             plt.imshow((OtoT[0,:,:,:3]+1)/2)
+            key_layer = np.repeat(np.expand_dims(OtoT[0,:,:,-1], axis=-1), 3, axis=2)
+
             fig.add_subplot(num_input, num_col, num_col*i+3)
+            plt.imshow((OtoT[0,:,:,:3]+key_layer+2)/4)
+            fig.add_subplot(num_input, num_col, num_col*i+4)
             plt.imshow((OtoTtoO[0,:,:,:3]+1)/2)
 
 
-        plt.savefig(os.path.join(sample_dir, 'A_{0:03d}k_step.jpg'.format(int(counter/1000))))
+        plt.savefig(os.path.join(sample_dir, 'A_{0:04d}.jpg'.format(int(counter/self.print_freq))))
 
         fig=plt.figure(figsize=(8, 8))
         # pdb.set_trace()
@@ -268,16 +276,20 @@ class cyclegan(object):
             sample_images = np.array(sample_images).astype(np.float32)
 
             # fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
-            OtoT = self.sess.run(A2B, feed_dict={input_A: sample_images})
-            OtoTtoO = self.sess.run(B2A, feed_dict={input_B: OtoT})
+            OtoT = self.sess.run(B2A, feed_dict={input_B: sample_images})
+            OtoTtoO = self.sess.run(A2B, feed_dict={input_A: OtoT})
             fig.add_subplot(num_input, num_col, num_col*i+1)
             plt.imshow((sample_images[0,:,:,:3]+1)/2)
             fig.add_subplot(num_input, num_col, num_col*i+2)
             plt.imshow((OtoT[0,:,:,:3]+1)/2)
+            key_layer = np.repeat(np.expand_dims(OtoT[0,:,:,-1], axis=-1), 3, axis=2)
+
             fig.add_subplot(num_input, num_col, num_col*i+3)
+            plt.imshow((OtoT[0,:,:,:3]+key_layer+2)/4)
+            fig.add_subplot(num_input, num_col, num_col*i+4)
             plt.imshow((OtoTtoO[0,:,:,:3]+1)/2)
 
-        plt.savefig(os.path.join(sample_dir, 'B_{0:03d}k_step.jpg'.format(int(counter/1000))))
+        plt.savefig(os.path.join(sample_dir, 'B_{0:04d}.jpg'.format(int(counter/self.print_freq))))
 
 
 
