@@ -1,7 +1,7 @@
 """
 CUDA_VISIBLE_DEVICES=7 python main.py \
---dataset_dir=f2c_mid_4dcyc --data_path=/shared/data/ \
---input_nc=4 --output_nc=4 --continue_train=False \
+--dataset_dir=f2c_4dcyc --data_path=/shared/data/ \
+--input_nc=4 --output_nc=4 --continue_train=True \
 --checkpoint_dir=checkpoint \
 --checkpoint_dir=../result/cycleGAN/checkpoint/
 
@@ -24,7 +24,7 @@ parser.add_argument('--dataset_dir', dest='dataset_dir', default='horse2zebra', 
 parser.add_argument('--data_path', dest='data_path', default='/webtoon/cycleGAN/datasets/', help='path of the dataset')
 parser.add_argument('--epoch', dest='epoch', type=int, default=400, help='# of epoch')
 parser.add_argument('--epoch_step', dest='epoch_step', type=int, default=100, help='# of epoch to decay lr')
-parser.add_argument('--batch_size', dest='batch_size', type=int, default=2, help='# images in batch')
+parser.add_argument('--batch_size', dest='batch_size', type=int, default=1, help='# images in batch')
 parser.add_argument('--train_size', dest='train_size', type=int, default=1e8, help='# images used to train')
 parser.add_argument('--load_size', dest='load_size', type=int, default=286, help='scale images to this size')
 parser.add_argument('--fine_size', dest='fine_size', type=int, default=256, help='then crop to this size')
@@ -36,8 +36,8 @@ parser.add_argument('--lr', dest='lr', type=float, default=0.0002, help='initial
 parser.add_argument('--beta1', dest='beta1', type=float, default=0.5, help='momentum term of adam')
 parser.add_argument('--which_direction', dest='which_direction', default='AtoB', help='AtoB or BtoA')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test')
-parser.add_argument('--save_freq', dest='save_freq', type=int, default=2000, help='save a model every save_freq iterations')
-parser.add_argument('--print_freq', dest='print_freq', type=int, default=10, help='print the debug information every print_freq iterations')
+parser.add_argument('--save_freq', dest='save_freq', type=int, default=2500, help='save a model every save_freq iterations')
+parser.add_argument('--print_freq', dest='print_freq', type=int, default=1000, help='print the debug information every print_freq iterations')
 parser.add_argument('--continue_train', dest='continue_train', type=bool, default=False, help='if continue training, load the latest model: 1: true, 0: false')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--sample_dir', dest='sample_dir', default='./sample2', help='sample are saved here')
