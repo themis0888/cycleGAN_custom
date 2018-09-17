@@ -234,8 +234,8 @@ class cyclegan(object):
 
         num_input = 4
         num_col = 4
-        dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testA'))
-        dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/testB'))
+        dataA = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/trainA'))
+        dataB = glob('{}{}/*.*'.format(self.data_path, self.dataset_dir + '/trainB'))
         np.random.shuffle(dataA)
         np.random.shuffle(dataB)
         fig=plt.figure(figsize=(8, 8))
@@ -248,7 +248,8 @@ class cyclegan(object):
             input_files = list(dataA[(self.batch_size)*i:(self.batch_size)*(i+1)])
             sample_images = [load_test_data(input_file, self.image_size) for input_file in input_files]
             sample_images = np.array(sample_images).astype(np.float32)
-            pdb.set_trace()
+            #pdb.set_trace()
+
             # fake_A, fake_B, rec_A, rec_B = self.sess.run([self.fake_A, self.fake_B, self.fake_A_, self.fake_B_], feed_dict={self.real_data: sample_images})
             OtoT = self.sess.run(A2B, feed_dict={input_A: sample_images})
             OtoTtoO = self.sess.run(B2A, feed_dict={input_B: OtoT})
@@ -264,7 +265,7 @@ class cyclegan(object):
             plt.imshow((OtoTtoO[0,:,:,:3]+1)/2)
 
 
-        plt.savefig(os.path.join(sample_dir, 'A_{0:04d}.jpg'.format(int(counter/self.print_freq))))
+        plt.savefig(os.path.join(sample_dir, 'A_{0:06d}.jpg'.format(int(counter/self.print_freq))))
 
         fig=plt.figure(figsize=(8, 8))
         # pdb.set_trace()
@@ -289,7 +290,7 @@ class cyclegan(object):
             fig.add_subplot(num_input, num_col, num_col*i+4)
             plt.imshow((OtoTtoO[0,:,:,:3]+1)/2)
 
-        plt.savefig(os.path.join(sample_dir, 'B_{0:04d}.jpg'.format(int(counter/self.print_freq))))
+        plt.savefig(os.path.join(sample_dir, 'B_{0:06d}.jpg'.format(int(counter/self.print_freq))))
 
 
 
